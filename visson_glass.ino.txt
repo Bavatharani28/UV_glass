@@ -1,0 +1,99 @@
+#include <DFRobotDFPlayerMini.h>
+
+#include <SoftwareSerial.h>
+
+const int trig = 2; // Trigger pin of ultrasonic sensor
+
+const int echo = 3; // Echo pin of ultrasonic sensor
+
+long time_taken;
+
+int dist, distance;
+
+SoftwareSerial mySerial(10, 11); // RX, TX
+
+DFRobotDFPlayerMini myDFPlayer;
+
+void setup()
+
+{
+
+Serial.begin(9600); // Initialize serial communication for debugging
+
+pinMode(trig, OUTPUT); // Configure trigger pin as output
+
+pinMode(echo, INPUT); // Configure echo pin as input
+
+mySerial.begin(9600); // Start serial communication with DFPlayer Mini
+
+if (!myDFPlayer.begin(mySerial)) { // Use softwareSerial to communicate with mp3.
+
+Serial.println("Unable to begin:");
+
+Serial.println("1.Please recheck the connection!");
+
+Serial.println("2.Please insert the SD card!");
+
+while (true);
+
+}
+
+}
+
+void calculate_distance(int trigger, int echo)
+
+{
+
+digitalWrite(trigger, LOW);
+
+delayMicroseconds(2);
+
+digitalWrite(trigger, HIGH);
+
+delayMicroseconds(10);
+
+digitalWrite(trigger, LOW);
+
+time_taken = pulseIn(echo, HIGH);
+
+dist = time_taken * 0.034 / 2; // Calculate distance in centimeters
+
+}
+
+void loop()
+
+{
+
+calculate_distance(trig, echo); // Measure distance
+
+distance = dist; // Store distance value
+
+Serial.println(distance); // Print distance for debugging
+
+delay(1000); // Delay for stability
+
+// Play audio file based on distance
+
+if (distance < 20) {
+myDFPlayer.play(1); // Play audio file for close object
+
+} else if (20 < distance < 60) {
+
+myDFPlayer.play(2); // Play audio file for object at medium distance
+
+} else if (40 < distance < 100) {
+
+myDFPlayer.play(3); // Play audio file for object at 1 meter away
+
+} else {
+
+myDFPlayer.play(4); // Play audio file for object far away
+
+}
+
+}
+
+It's my stem project
+Iot based ultrasonic vision glass
+Athoda source code
+Ipo na itha GitHub la potalama??
